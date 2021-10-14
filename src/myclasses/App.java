@@ -25,6 +25,7 @@ public class App {
           System.out.println("Выбирите номер задачи: ");
           System.out.println("0: Закрыть программу");
           System.out.println("1: Добавить Читателя");
+          System.out.println("2: Добавить Книгу");
           int task = scanner.nextInt(); scanner.nextLine();
           switch (task) {
               case 0:
@@ -39,6 +40,20 @@ public class App {
                   System.out.print("Введите телефон читателя: ");
                   user.setTel(scanner.nextLine());
                   System.out.println("Читатель инициирован: "+user.toString());
+                  break;
+              case 2:
+                  Book book = new Book();
+                  Author author = new Author();
+                  System.out.print("Введите имя книги: ");
+                  book.setBookName(scanner.nextLine());
+                  System.out.print("Введите имя автора книги: ");
+                  author.setFirstName(scanner.nextLine());
+                  System.out.print("Введите фамилию автора книги: ");
+                  author.setLastName(scanner.nextLine());
+                  System.out.print("Введите год выпуска книги: ");
+                  book.setReleaseYear(scanner.nextInt());
+                  System.out.println("Книга инициирована: "+book.toString());
+                  System.out.println("Автор "+author.toString());
                   break;
               default:
                   System.out.println("Выбирите номер из списка");;
