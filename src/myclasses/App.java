@@ -55,5 +55,13 @@ public class App {
                             history.getBook().getBookName(),
                             history.getGivenBook()
                 );
+        c = new GregorianCalendar();
+        history.setReturnBook(c.getTime());
+        System.out.printf("Читатель %s %s вернул книгу \"%s\", %s%n",
+                            history.getUser().getFirstName(),
+                            history.getUser().getLastName(),
+                            history.getBook().getBookName(),
+                            history.getGivenBook()
+                );
     }
 }
