@@ -61,7 +61,7 @@ public class App {
                             history.getUser().getFirstName(),
                             history.getUser().getLastName(),
                             history.getBook().getBookName(),
-                            history.getGivenBook()
+                            history.getReturnBook()
                 );
     }
 }
