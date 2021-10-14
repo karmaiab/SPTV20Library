@@ -49,10 +49,11 @@ public class App {
         history.setUser(user);
         Calendar c = new GregorianCalendar();
         history.setGivenBook(c.getTime());
-        System.out.printf("Читатель %s %s взял читать книгу \"%s\"%n",
+        System.out.printf("Читатель %s %s взял читать книгу \"%s\", %s%n",
                             history.getUser().getFirstName(),
                             history.getUser().getLastName(),
-                            history.getBook().getBookName()
+                            history.getBook().getBookName(),
+                            history.getGivenBook()
                 );
     }
 }
