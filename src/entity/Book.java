@@ -5,6 +5,8 @@
  */
 package entity;
 
+import java.util.Arrays;
+
 /**
  *
  * @author User
@@ -38,13 +40,13 @@ public class Book {
         this.releaseYear = releaseYear;
     }
 
-    public void setAuthors() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     @Override
     public String toString() {
-        return "Book{" + "BookName=" + BookName + ", releaseYear=" + releaseYear + '}';
+        return "Book{" + "BookName=" + BookName + ", authors=" + Arrays.toString(authors) + ", releaseYear=" + releaseYear + '}';
     }
+
+    
+
+   
     
 }
