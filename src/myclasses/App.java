@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
+import tools.SaverToFiles;
 
 /**
  *
@@ -26,6 +27,12 @@ public class App {
     private List<User> users = new ArrayList<>();
     private List<History> histories = new ArrayList<>();
     private Calendar c = new GregorianCalendar();
+    private SaverToFiles saverToFiles = new SaverToFiles();
+    
+    public App(){
+        books = saverToFiles.loadBooks();
+    }
+    
     public void run(){
         String repeat = "yes";
       do{
@@ -101,8 +108,10 @@ public class App {
                        authors[i] = author;
                   }
                   book.setAuthors(authors);
-                  books.add(book);                
+                  books.add(book);
                   System.out.println("Книга инициирована: "+book.toString());
+                  saverToFiles.saveBooks(books);
+                  
     }
 
     private void listBook() {
