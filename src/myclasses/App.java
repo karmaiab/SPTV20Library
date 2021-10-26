@@ -113,6 +113,9 @@ public class App {
                        authors[i] = author;
                   }
                   book.setAuthors(authors);
+                  System.out.println("Введите количество книг");
+                  book.setQuantity(scanner.nextInt());scanner.nextLine();
+                  book.setCount(book.getQuantity());
                   books.add(book);
                   System.out.println("Книга инициирована: "+book.toString());
                   saverToFiles.saveBooks(books);
@@ -136,15 +139,21 @@ public class App {
     private void givenBook() {
         System.out.println("--------Выдать книгу----------");
                   System.out.println("Список книг: ");
+                  int n = 0;
                   for (int i = 0; i < books.size(); i++) {
-                    if (books.get(i) != null) {
+                    if (books.get(i) != null && books.get(i).getCount() > 0) {
                           System.out.printf("%d. %s. %s. %d.%n",
                                     i+i,
                                     books.get(i).getBookName(),
                                     Arrays.toString(books.get(i).getAuthors()),
                                     books.get(i).getReleaseYear()
                               );
+                          n++;
                       }
+                  }
+                  if (n < 1) {
+                      System.out.println("Нет книг для чтение");
+                      return;
                   }
                   System.out.println("Выбирите номер книги: ");
                   int numberBook = scanner.nextInt();scanner.nextLine();
@@ -164,10 +173,12 @@ public class App {
                   
                   History history = new History();
                   history.setBook(books.get(numberBook));
-                  history.setUser(users.get(numberUser));
+                  history.setUser(users.get(numberUser - 1));
                   Calendar c = new GregorianCalendar();
                   history.setGivenBook(c.getTime());
                   histories.add(history);
+                  history.getBook().setCount(history.getBook().getCount() - 1);
+                  saverToFiles.saveBooks(books);
                   saverToFiles.saveHistories(histories);
                   System.out.println("--------------");
     }
@@ -175,20 +186,35 @@ public class App {
     private void returnBook() {
         System.out.println("----Возрат книги-----");
                   System.out.println("Список выданых книг");
+                  int n = 0;
                   for (int i = 0; i < histories.size(); i++) {
-                      if(histories.get(i) != null && histories.get(i).getReturnBook() == null){
+                      //печатаем книгу если она !null, выдана и
+                      if(histories.get(i) != null 
+                              && histories.get(i).getReturnBook() == null
+                              && (
+                                    histories.get(i).getBook().getCount()
+                                    < histories.get(i).getBook().getQuantity() + 1
+                              )
+                        ){
                           System.out.printf("%d. Книгу %s, читает %s %s%n",
                                   i+1,
                                   histories.get(i).getBook().getBookName(),
                                   histories.get(i).getUser().getFirstName(),
                                   histories.get(i).getUser().getLastName()
                           );
+                          n++;
                       }
                   }
                   System.out.println("Номер книги пж: ");
                   int numberHistory = scanner.nextInt();scanner.nextLine();
                   c = new GregorianCalendar();
                   histories.get(numberHistory - 1).setReturnBook(c.getTime());
+                  histories.get(numberHistory - 1).getBook().setCount(
+                        histories.get(numberHistory - 1)
+                                .getBook()
+                                .getCount() +1
+                  );
+                  saverToFiles.saveBooks(books);
                   saverToFiles.saveHistories(histories);
     }
 

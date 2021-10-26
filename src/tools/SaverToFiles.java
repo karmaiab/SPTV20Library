@@ -66,7 +66,7 @@ public class SaverToFiles implements Keeping{
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-            fos = new FileOutputStream("Users");
+            fos = new FileOutputStream("users");
             oos = new ObjectOutputStream(fos);
             oos.writeObject(users);
             oos.flush();
