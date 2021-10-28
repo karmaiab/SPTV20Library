@@ -125,15 +125,27 @@ public class App {
     private void listBook() {
         System.out.println("Список книг");
                   for (int i = 0; i < books.size(); i++) {
-                      if (books.get(i) != null) {
+                      if (books.get(i) != null
+                              && books.get(i).getCount() > 0
+                              && books.get(i).getCount() < books.get(i).getQuantity() + 1) {
                           System.out.printf("%d. %s. %s. %d.%n",
                                     i+i,
                                     books.get(i).getBookName(),
                                     Arrays.toString(books.get(i).getAuthors()),
                                     books.get(i).getReleaseYear()
+                                    
+                                    
                               );
-                      }    
+                      } else if(books.get(i) != null) {
+                          System.out.printf("%d. %s. %s. %d.%n",
+                                    i+i,
+                                    books.get(i).getBookName(),
+                                    Arrays.toString(books.get(i).getAuthors()),
+                                    books.get(i).getReleaseYear(),
+                                    "05.10.2021"
+                          );
                   }
+    }
     }
 
     private void givenBook() {
@@ -172,8 +184,8 @@ public class App {
                   int numberUser = scanner.nextInt();scanner.nextLine();
                   
                   History history = new History();
-                  history.setBook(books.get(numberBook));
-                  history.setUser(users.get(numberUser - 1));
+                  history.setBook(books.get(numberBook - 1));
+                  history.setUser(users.get(numberUser));
                   Calendar c = new GregorianCalendar();
                   history.setGivenBook(c.getTime());
                   histories.add(history);
