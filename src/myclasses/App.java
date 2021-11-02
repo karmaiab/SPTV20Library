@@ -9,6 +9,10 @@ import entity.Book;
 import entity.Author;
 import entity.History;
 import entity.User;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,6 +32,7 @@ public class App {
     private List<History> histories = new ArrayList<>();
     private Calendar c = new GregorianCalendar();
     private SaverToFiles saverToFiles = new SaverToFiles();
+
     
     public App(){
         books = saverToFiles.loadBooks();
@@ -99,20 +104,20 @@ public class App {
         Book book = new Book();
                   System.out.print("Введите имя книги: ");
                   book.setBookName(scanner.nextLine());
-                  System.out.print("Введите год выпуска книги: ");
-                  book.setReleaseYear(scanner.nextInt());scanner.nextLine();
                   System.out.print("Введите количевсвто авторов : ");
                   int amountAuthors = (scanner.nextInt());scanner.nextLine();
                   Author[] authors = new Author[amountAuthors];
                   for (int i = 0; i < amountAuthors; i++) {
                       Author author = new Author();
-                       System.out.print("Введите имя автора книги: "+(i+1)+": ");
-                       author.setFirstName(scanner.nextLine());
-                       System.out.print("Введите фамилию автора книги: ");
-                       author.setLastName(scanner.nextLine());
-                       authors[i] = author;
+                      System.out.print("Введите имя автора книги: "+(i+1)+": ");
+                      author.setFirstName(scanner.nextLine());
+                      System.out.print("Введите фамилию автора книги: ");
+                      author.setLastName(scanner.nextLine());
+                      authors[i] = author;
                   }
                   book.setAuthors(authors);
+                  System.out.print("Введите год выпуска книги: ");
+                  book.setReleaseYear(scanner.nextInt());scanner.nextLine();
                   System.out.println("Введите количество книг");
                   book.setQuantity(scanner.nextInt());scanner.nextLine();
                   book.setCount(book.getQuantity());
@@ -127,25 +132,39 @@ public class App {
                   for (int i = 0; i < books.size(); i++) {
                       if (books.get(i) != null
                               && books.get(i).getCount() > 0
-                              && books.get(i).getCount() < books.get(i).getQuantity() + 1) {
-                          System.out.printf("%d. %s. %s. %d.%n",
-                                    i+i,
-                                    books.get(i).getBookName(),
-                                    Arrays.toString(books.get(i).getAuthors()),
-                                    books.get(i).getReleaseYear()
-                                    
-                                    
-                              );
-                      } else if(books.get(i) != null) {
-                          System.out.printf("%d. %s. %s. %d.%n",
-                                    i+i,
+                              && books.get(i).getCount() < books.get(i).getQuantity() + 1) { 
+                           System.out.printf("%d. %s. %s. %d.%n"
+                                ,i+1
+                                ,books.get(i).getBookName()
+                                ,Arrays.toString(books.get(i).getAuthors())
+                                ,books.get(i).getReleaseYear()
+                            );
+                      }else if(books.get(i) != null) {
+                          System.out.printf("%d. %s. %s. %d. - all books in hand until: %s%n",
+                                    i+1,
                                     books.get(i).getBookName(),
                                     Arrays.toString(books.get(i).getAuthors()),
                                     books.get(i).getReleaseYear(),
-                                    "05.10.2021"
+                                    showReturnDateBook(books.get(i))
                           );
                   }
     }
+    }
+    private String showReturnDateBook(Book book){
+        LocalDate givenDate = null;
+        for (int i = 0; i < histories.size(); i++) {
+            if((histories.get(i).getBook().getBookName()).equals(book.getBookName()) && histories.get(i).getReturnBook() == null){
+                if (givenDate == null) {
+                    givenDate = histories.get(i).getGivenBook().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                }
+                if (givenDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() < histories.get(i).getGivenBook().getTime()) {
+                    givenDate = histories.get(i).getGivenBook().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                }
+            }
+        }
+        LocalDate returnDateBook = givenDate.plusDays(14);
+        return returnDateBook.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        
     }
 
     private void givenBook() {
@@ -155,7 +174,7 @@ public class App {
                   for (int i = 0; i < books.size(); i++) {
                     if (books.get(i) != null && books.get(i).getCount() > 0) {
                           System.out.printf("%d. %s. %s. %d.%n",
-                                    i+i,
+                                    i+1,
                                     books.get(i).getBookName(),
                                     Arrays.toString(books.get(i).getAuthors()),
                                     books.get(i).getReleaseYear()
@@ -173,7 +192,7 @@ public class App {
                   for (int i = 0; i < users.size(); i++) {
                       if (users.get(i) != null) {
                           System.out.printf("%d. %s %s. %s%n",
-                                    i+i,
+                                    i+1,
                                     users.get(i).getFirstName(),
                                     users.get(i).getLastName(),
                                     users.get(i).getTel()
@@ -182,10 +201,9 @@ public class App {
                   }
                   System.out.println("Введите номер читателья");
                   int numberUser = scanner.nextInt();scanner.nextLine();
-                  
                   History history = new History();
                   history.setBook(books.get(numberBook - 1));
-                  history.setUser(users.get(numberUser));
+                  history.setUser(users.get(numberUser - 1));
                   Calendar c = new GregorianCalendar();
                   history.setGivenBook(c.getTime());
                   histories.add(history);
@@ -221,11 +239,17 @@ public class App {
                   int numberHistory = scanner.nextInt();scanner.nextLine();
                   c = new GregorianCalendar();
                   histories.get(numberHistory - 1).setReturnBook(c.getTime());
-                  histories.get(numberHistory - 1).getBook().setCount(
-                        histories.get(numberHistory - 1)
-                                .getBook()
-                                .getCount() +1
-                  );
+//                  histories.get(numberHistory - 1).getBook().setCount(
+//                        histories.get(numberHistory - 1)
+//                                .getBook()
+//                                .getCount() +1
+//                  );
+                  for (int i = 0; i < books.size(); i++) {
+                      if (books.get(i).getBookName().equals(histories.get(numberHistory - 1).getBook().getBookName())) {
+                          books.get(i).setCount(books.get(i).getCount() + 1);
+                          break;
+                      }
+        }
                   saverToFiles.saveBooks(books);
                   saverToFiles.saveHistories(histories);
     }
@@ -235,7 +259,7 @@ public class App {
                   for (int i = 0; i < users.size(); i++) {
                       if (users.get(i) != null) {
                           System.out.printf("%d. %s %s. %s%n",
-                                    i+i,
+                                    i+1,
                                     users.get(i).getFirstName(),
                                     users.get(i).getLastName(),
                                     users.get(i).getTel()
@@ -244,19 +268,32 @@ public class App {
                   }
     }
 
-    private void givenBookList() {
+    private boolean givenBookList() {
         System.out.println("Список выданых книг");
+        int n = 0;
                   for (int i = 0; i < histories.size(); i++) {
-                      if(histories.get(i) != null){
-                          System.out.printf("%d. %s %s %d%n",
-                                  i+i,
+                      if(histories.get(i) != null 
+                              && histories.get(i).getReturnBook() == null
+                              &&(
+                                    histories.get(i).getBook().getCount() 
+                                    < histories.get(i).getBook().getQuantity()+1
+                              ) 
+                              
+                              ){
+                          System.out.printf("%d. the book: \"%s\" is reading:%s %s%n",
+                                  i+1,
                                   histories.get(i).getBook().getBookName(),
-                                  Arrays.toString(histories.get(i).getBook().getAuthors()),
-                                  histories.get(i).getBook().getReleaseYear()
+                                  histories.get(i).getUser().getFirstName(),
+                                  histories.get(i).getUser().getLastName()
                           );
-                          
+                          n++;
                       }
                   }
+                  if (n < 1) {
+                      System.out.println("Нет выданных книг");
+                      return false;
+                }   
+                  return true;
     }
     
 }
